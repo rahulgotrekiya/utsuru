@@ -1,0 +1,34 @@
+services:
+  mediaflow:
+    build: .
+    container_name: mediaflow
+    restart: unless-stopped
+    ports:
+      - "4096:4096"
+    environment:
+      - PORT=4096
+      - HOST=0.0.0.0
+      - SECRET_KEY=${SECRET_KEY:-change-me-use-openssl-rand-hex-32}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-mediaflow}
+      - MEDIA_MOVIES_DIR=/media/movies
+      - MEDIA_TV_DIR=/media/tv
+      - ARIA2_RPC_URL=http://localhost:6800/jsonrpc
+      - ARIA2_RPC_SECRET=
+      - JELLYFIN_URL=${JELLYFIN_URL:-}
+      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
+      - DATABASE_PATH=/app/data/mediaflow.db
+      - TZ=${TZ:-UTC}
+    volumes:
+      - mediaflow-data:/app/data
+      - ${MOVIES_PATH:-./media/movies}:/media/movies
+      - ${TV_PATH:-./media/tv}:/media/tv
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4096/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  mediaflow-data:
+    driver: local

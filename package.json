@@ -1,0 +1,24 @@
+{
+  "name": "mediaflow",
+  "version": "1.0.0",
+  "description": "Self-hosted Jellyfin download manager with Zerobyte-inspired UI",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "db:migrate": "node db/migrate.js"
+  },
+  "dependencies": {
+    "express": "^5.2.0",
+    "sql.js": "^1.12.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.7",
+    "helmet": "^8.0.0",
+    "express-rate-limit": "^8.4.0",
+    "sanitize-html": "^2.14.0",
+    "validator": "^13.12.0",
+    "cookie-parser": "^1.4.7"
+  }
+}
