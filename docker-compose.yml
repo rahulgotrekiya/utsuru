@@ -1,7 +1,7 @@
 services:
-  mediaflow:
+  utsuru:
     build: .
-    container_name: mediaflow
+    container_name: utsuru
     restart: unless-stopped
     ports:
       - "4096:4096"
@@ -9,17 +9,17 @@ services:
       - PORT=4096
       - HOST=0.0.0.0
       - SECRET_KEY=${SECRET_KEY:-change-me-use-openssl-rand-hex-32}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-mediaflow}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-utsuru}
       - MEDIA_MOVIES_DIR=/media/movies
       - MEDIA_TV_DIR=/media/tv
       - ARIA2_RPC_URL=http://localhost:6800/jsonrpc
       - ARIA2_RPC_SECRET=
       - JELLYFIN_URL=${JELLYFIN_URL:-}
       - JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
-      - DATABASE_PATH=/app/data/mediaflow.db
+      - DATABASE_PATH=/app/data/utsuru.db
       - TZ=${TZ:-UTC}
     volumes:
-      - mediaflow-data:/app/data
+      - utsuru-data:/app/data
       - ${MOVIES_PATH:-./media/movies}:/media/movies
       - ${TV_PATH:-./media/tv}:/media/tv
     healthcheck:
@@ -30,5 +30,5 @@ services:
       start_period: 10s
 
 volumes:
-  mediaflow-data:
+  utsuru-data:
     driver: local

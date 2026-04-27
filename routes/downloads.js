@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import fs from 'fs';
+import os from 'os';
 import { queryAll, queryOne, run } from '../db/database.js';
 import * as aria2 from '../lib/aria2.js';
+import logger from '../lib/logger.js';
 import {
     sanitizeText,
     sanitizeFilename,
@@ -11,8 +13,17 @@ import {
 } from '../lib/sanitize.js';
 
 const router = Router();
-const MOVIES_DIR = process.env.MEDIA_MOVIES_DIR || '/media/movies';
-const TV_DIR = process.env.MEDIA_TV_DIR || '/media/tv';
+
+// Expand ~ to user home directory (Node.js doesn't do this automatically)
+function expandHome(p) {
+    if (p.startsWith('~/') || p === '~') {
+        return p.replace('~', os.homedir());
+    }
+    return p;
+}
+
+const MOVIES_DIR = expandHome(process.env.MEDIA_MOVIES_DIR || './media/movies');
+const TV_DIR = expandHome(process.env.MEDIA_TV_DIR || './media/tv');
 
 // GET /api/downloads
 router.get('/', (req, res) => {
@@ -165,23 +176,38 @@ router.post('/', async (req, res) => {
 
         let gid = null;
         try { gid = await aria2.addDownload(urlResult.url, mediaPath.dirPath, filename); }
-        catch (err) { console.warn('[Download] aria2c unavailable:', err.message); }
+        catch (err) {
+            logger.warn({ event: 'aria2_unavailable', error: err.message }, 'aria2c unavailable, download queued');
+        }
 
-        const result = run(
+        const insertResult = run(
             `INSERT INTO downloads (type, title, year, season, episode, url, filename, filepath, status, aria2_gid, started_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
             type, cleanTitle, cleanYear, cleanSeason, cleanEpisode,
             urlResult.url, filename, `${mediaPath.dirPath}/${filename}`,
             gid ? 'downloading' : 'queued', gid
         );
 
+        logger.info({
+            event: 'download_created',
+            download_id: insertResult.lastInsertRowid,
+            type,
+            title: cleanTitle,
+            year: cleanYear,
+            status: gid ? 'downloading' : 'queued',
+            user: req.user?.username,
+        }, `Download created: ${cleanTitle}`);
+
         res.status(201).json({
-            id: result.lastInsertRowid,
+            id: insertResult.lastInsertRowid,
             message: gid ? 'Download started' : 'Download queued (aria2c unavailable)',
             path: `${mediaPath.dirPath}/${filename}`,
         });
     } catch (err) {
-        console.error('[Download] Create error:', err);
-        res.status(500).json({ error: 'Failed to create download' });
+        logger.error({ event: 'download_create_error', error: err.message, code: err.code }, 'Failed to create download');
+        const msg = err.code === 'EACCES'
+            ? `Permission denied: cannot write to ${err.path}. Check MEDIA_MOVIES_DIR and MEDIA_TV_DIR in .env`
+            : err.message || 'Failed to create download';
+        res.status(500).json({ error: msg });
     }
 });
 
@@ -221,6 +247,7 @@ router.patch('/:id', async (req, res) => {
                 return res.status(400).json({ error: 'Invalid action' });
         }
         const updated = queryOne('SELECT * FROM downloads WHERE id = ?', id);
+        logger.info({ event: `download_${action}`, download_id: id, user: req.user?.username });
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: `Action failed: ${err.message}` });

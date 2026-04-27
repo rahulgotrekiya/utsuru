@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -21,12 +22,14 @@ router.post('/scan', async (_req, res) => {
         });
 
         if (response.ok || response.status === 204) {
+            logger.info({ event: 'jellyfin_scan_triggered', user: _req.user?.username }, 'Jellyfin library scan triggered');
             res.json({ success: true, message: 'Library scan triggered' });
         } else {
             const text = await response.text();
             res.status(response.status).json({ error: `Jellyfin returned ${response.status}: ${text}` });
         }
     } catch (err) {
+        logger.error({ event: 'jellyfin_scan_error', error: err.message }, 'Failed to contact Jellyfin');
         res.status(500).json({ error: `Failed to contact Jellyfin: ${err.message}` });
     }
 });

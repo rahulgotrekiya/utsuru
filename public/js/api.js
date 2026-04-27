@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MediaFlow — API Client
+   Utsuru — API Client
    All fetch calls to the backend, with error handling
    ═══════════════════════════════════════════════════════════════════════════ */
 

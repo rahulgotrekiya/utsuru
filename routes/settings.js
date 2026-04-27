@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { queryAll, queryOne, run } from '../db/database.js';
 import { sanitizeText } from '../lib/sanitize.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -37,6 +38,7 @@ router.put('/', (req, res) => {
             updates[key] = value;
         }
     }
+    logger.info({ event: 'settings_updated', keys: Object.keys(updates), user: req.user?.username }, 'Settings updated');
     res.json({ success: true, updated: Object.keys(updates) });
 });
 

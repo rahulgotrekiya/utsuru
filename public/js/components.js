@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MediaFlow — Component Renderers
+   Utsuru — Component Renderers
    Pure functions that return HTML strings for each UI component.
    Uses data-action attributes for event delegation (no inline onclick).
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -79,8 +79,8 @@ function statusDot(status) {
 
 function typeBadge(type) {
     return type === 'movie'
-        ? '<span class="badge badge-accent">🎬 Movie</span>'
-        : '<span class="badge badge-info">📺 TV</span>';
+        ? '<span class="badge badge-accent" style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="clapperboard" style="width:12px;height:12px;"></i> Movie</span>'
+        : '<span class="badge badge-info" style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="tv" style="width:12px;height:12px;"></i> TV</span>';
 }
 
 // ── Page Renderers ──────────────────────────────────────────────────────────
@@ -99,33 +99,28 @@ function renderDashboard(stats, chart, recent) {
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <div class="stat-card ">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="stat-label">Total Downloads</div>
                 <div class="stat-value-lg">${stats.totalDownloads || 0}</div>
             </div>
-            <div class="stat-card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <div class="stat-card ">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="stat-label">Data Transferred</div>
                 <div class="stat-value-lg">${formatBytes(stats.totalBytes)}</div>
             </div>
-            <div class="stat-card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <div class="stat-card ">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="stat-label">Movies</div>
                 <div class="stat-value-lg">${stats.movieCount || 0}</div>
             </div>
-            <div class="stat-card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <div class="stat-card ">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="stat-label">TV Episodes</div>
                 <div class="stat-value-lg">${stats.tvCount || 0}</div>
             </div>
-            <div class="stat-card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <div class="stat-card ">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="stat-label">Active Downloads</div>
                 <div class="stat-value-lg flex items-center gap-2">
                     ${stats.activeDownloads > 0 ? statusDot('downloading') : ''}
@@ -136,9 +131,8 @@ function renderDashboard(stats, chart, recent) {
 
         ${renderChart(chart)}
 
-        <div class="card card-bracketed">
-            <span class="card-bracket-bottom left"></span>
-            <span class="card-bracket-bottom right"></span>
+        <div class="card ">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
             <div class="card-header flex items-center justify-between">
                 <span class="font-semibold text-sm">Recent Downloads</span>
                 <button class="btn btn-secondary btn-sm" data-action="navigate" data-page="history">View All</button>
@@ -205,9 +199,8 @@ function renderDownloads(downloads) {
 
         <div id="active-downloads">
             ${downloads.length === 0
-                ? `<div class="card card-bracketed">
-                    <span class="card-bracket-bottom left"></span>
-                    <span class="card-bracket-bottom right"></span>
+                ? `<div class="card ">
+                    <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                     <div class="empty-state">
                         <i data-lucide="download" style="width:48px;height:48px;opacity:0.3;"></i>
                         <div>
@@ -229,9 +222,8 @@ function renderDownloadCard(d) {
     const isQueued = d.status === 'queued';
 
     return `
-        <div class="download-card card-bracketed" id="download-${d.id}">
-            <span class="card-bracket-bottom left"></span>
-            <span class="card-bracket-bottom right"></span>
+        <div class="download-card " id="download-${d.id}">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
             <div class="flex items-center justify-between">
                 <div class="download-title">
                     ${statusDot(d.status)}
@@ -243,7 +235,7 @@ function renderDownloadCard(d) {
                 ${statusBadge(d.status)}
             </div>
             <div class="download-meta">
-                ${d.filename ? `<span>📄 ${escapeHtml(d.filename)}</span>` : ''}
+                ${d.filename ? `<span style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="file" style="width:14px;height:14px;"></i> ${escapeHtml(d.filename)}</span>` : ''}
                 <span>${timeAgo(d.created_at)}</span>
             </div>
             ${isActive || isPaused || isQueued ? `
@@ -263,13 +255,13 @@ function renderDownloadCard(d) {
                     </div>
                 </div>
                 <div class="download-actions">
-                    ${isActive ? `<button class="btn btn-secondary btn-sm" data-action="download-pause" data-id="${d.id}">⏸ Pause</button>` : ''}
-                    ${isPaused ? `<button class="btn btn-secondary btn-sm" data-action="download-resume" data-id="${d.id}">▶ Resume</button>` : ''}
-                    <button class="btn btn-destructive btn-sm" data-action="download-cancel" data-id="${d.id}">✕ Cancel</button>
+                    ${isActive ? `<button class="btn btn-secondary btn-sm" data-action="download-pause" data-id="${d.id}"><i data-lucide="pause" style="width:14px;height:14px;"></i> Pause</button>` : ''}
+                    ${isPaused ? `<button class="btn btn-secondary btn-sm" data-action="download-resume" data-id="${d.id}"><i data-lucide="play" style="width:14px;height:14px;"></i> Resume</button>` : ''}
+                    <button class="btn btn-destructive btn-sm" data-action="download-cancel" data-id="${d.id}"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancel</button>
                 </div>
             ` : ''}
             ${d.status === 'error' ? `
-                <div class="mt-2 text-sm" style="color:var(--destructive);">⚠ ${escapeHtml(d.error_msg || 'Unknown error')}</div>
+                <div class="mt-2 text-sm" style="color:var(--destructive);display:flex;align-items:center;gap:4px;"><i data-lucide="triangle-alert" style="width:14px;height:14px;"></i> ${escapeHtml(d.error_msg || 'Unknown error')}</div>
             ` : ''}
         </div>
     `;
@@ -279,48 +271,69 @@ function renderHistory(downloads, total) {
     return `
         <div class="page-header">
             <div>
-                <h1 class="page-title">Download History</h1>
-                <p class="page-subtitle">${total} total downloads</p>
+                <h1 class="page-title">History</h1>
+                <p class="page-subtitle">All download activity</p>
             </div>
         </div>
 
-        <div class="search-bar">
-            <input class="input search-input" type="text" id="history-search" placeholder="Search by title...">
-            <select class="select" style="max-width:150px;" id="history-filter">
-                <option value="">All Status</option>
-                <option value="complete">Complete</option>
-                <option value="downloading">Downloading</option>
-                <option value="paused">Paused</option>
-                <option value="error">Error</option>
-                <option value="queued">Queued</option>
-            </select>
-            <select class="select" style="max-width:120px;" id="history-type-filter">
-                <option value="">All Types</option>
-                <option value="movie">Movies</option>
-                <option value="tv">TV</option>
-            </select>
-        </div>
+        <div class="card" style="padding:0; gap:0;">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
+            
+            <div class="card-header" style="flex-direction:row; align-items:center; padding: 1rem; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; background: var(--card-header); border-bottom: none;">
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; position:relative;">
+                    <input class="input" type="text" id="history-search" placeholder="Search..." style="max-width:200px; padding-left:2.25rem; border-radius:0; height:2.25rem;">
+                    <i data-lucide="search" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--muted-foreground);"></i>
+                    <select class="select" style="max-width:150px; height:2.25rem; font-size:0.875rem; border-radius:0;" id="history-type-filter">
+                        <option value="">All types</option>
+                        <option value="movie">Movies</option>
+                        <option value="tv">TV</option>
+                    </select>
+                    <select class="select" style="max-width:150px; height:2.25rem; font-size:0.875rem; border-radius:0;" id="history-filter">
+                        <option value="">All status</option>
+                        <option value="complete">Complete</option>
+                        <option value="downloading">Downloading</option>
+                        <option value="paused">Paused</option>
+                        <option value="error">Error</option>
+                        <option value="queued">Queued</option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="table-wrapper" id="history-table-wrapper">
-            ${downloads.length === 0
-                ? '<div class="empty-state"><p class="text-muted">No downloads found</p></div>'
-                : `<table>
-                    <thead><tr><th>Status</th><th>Title</th><th>Type</th><th>Filename</th><th>Size</th><th>Date</th><th></th></tr></thead>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; text-align:left; border-collapse:collapse; border-top:1px solid var(--border); font-size:0.875rem;">
+                    <thead style="background:var(--card-header);">
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <th style="height:2.5rem; padding:0 0.5rem; font-weight:500; text-transform:uppercase; color:var(--foreground); width:25%;">Name</th>
+                            <th style="height:2.5rem; padding:0 0.5rem; font-weight:500; text-transform:uppercase; color:var(--foreground); text-align:left;">Type</th>
+                            <th style="height:2.5rem; padding:0 0.5rem; font-weight:500; text-transform:uppercase; color:var(--foreground); text-align:center;">Status</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        ${downloads.map(d => `
-                            <tr>
-                                <td>${statusDot(d.status)} ${statusBadge(d.status)}</td>
-                                <td class="font-semibold">${escapeHtml(d.title)}${d.year ? ` <span class="text-muted">(${d.year})</span>` : ''}${d.season != null ? ` <span class="text-muted">S${String(d.season).padStart(2,'0')}E${String(d.episode).padStart(2,'0')}</span>` : ''}</td>
-                                <td>${typeBadge(d.type)}</td>
-                                <td class="text-xs text-muted truncate" style="max-width:180px;" title="${escapeHtml(d.filename)}">${escapeHtml(d.filename) || '--'}</td>
-                                <td class="font-mono">${formatBytes(d.filesize)}</td>
-                                <td class="text-muted text-xs">${formatDate(d.completed_at || d.created_at)}</td>
-                                <td><button class="btn btn-ghost btn-sm" data-action="delete-download" data-id="${d.id}" title="Remove">✕</button></td>
-                            </tr>
-                        `).join('')}
+                        ${downloads.length === 0
+                            ? '<tr><td colspan="3" style="padding:3rem 0.5rem; text-align:center; color:var(--muted-foreground);">No destinations match your filters.</td></tr>'
+                            : downloads.map(d => `
+                                <tr style="border-bottom:1px solid var(--border); transition:background-color 0.15s ease; height:3rem; cursor:pointer;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='transparent'">
+                                    <td style="padding:0.5rem; font-weight:500; color:var(--strong-accent);">
+                                        ${escapeHtml(d.title)}${d.year ? ` <span style="color:var(--muted-foreground);">(${d.year})</span>` : ''}${d.season != null ? ` <span style="color:var(--muted-foreground);">S${String(d.season).padStart(2,'0')}E${String(d.episode).padStart(2,'0')}</span>` : ''}
+                                    </td>
+                                    <td style="padding:0.5rem; text-transform:capitalize; color:var(--muted-foreground);">
+                                        ${d.type === 'movie' ? 'movie' : 'tv'}
+                                    </td>
+                                    <td style="padding:0.5rem; text-align:center;">
+                                        ${statusDot(d.status)}
+                                    </td>
+                                </tr>
+                            `).join('')
+                        }
                     </tbody>
-                </table>`
-            }
+                </table>
+            </div>
+
+            <div class="card-footer" style="padding: 0.5rem 1rem; justify-content:flex-end; border-top:1px solid var(--border); background:var(--card-header);">
+                <span style="font-size:0.875rem; color:var(--muted-foreground);">
+                    <span style="color:var(--strong-accent);">${downloads.length}</span> downloads
+                </span>
+            </div>
         </div>
     `;
 }
@@ -338,14 +351,19 @@ function renderLibrary(movies, tv) {
             </button>
         </div>
 
-        <div class="tabs" id="library-tabs">
-            <button class="tab active" data-action="switch-library-tab" data-tab="movies">🎬 Movies (${movies.items?.length || 0})</button>
-            <button class="tab" data-action="switch-library-tab" data-tab="tv">📺 TV Shows (${tv.items?.length || 0})</button>
+        <div class="tabs-list" id="library-tabs">
+            <button class="tab active" data-action="switch-library-tab" data-tab="movies">
+                <span class="tab-text" style="display:flex;align-items:center;gap:0.375rem;"><i data-lucide="clapperboard" style="width:16px;height:16px;"></i> Movies (${movies.items?.length || 0})</span>
+                <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+            </button>
+            <button class="tab" data-action="switch-library-tab" data-tab="tv">
+                <span class="tab-text" style="display:flex;align-items:center;gap:0.375rem;"><i data-lucide="tv" style="width:16px;height:16px;"></i> TV Shows (${tv.items?.length || 0})</span>
+                <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+            </button>
         </div>
 
-        <div id="library-movies" class="card card-bracketed">
-            <span class="card-bracket-bottom left"></span>
-            <span class="card-bracket-bottom right"></span>
+        <div id="library-movies" class="card ">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
             <div class="card-content">
                 <div class="text-xs text-muted mb-4">${escapeHtml(movies.root)}</div>
                 <div class="file-tree" id="movies-tree">
@@ -357,9 +375,8 @@ function renderLibrary(movies, tv) {
             </div>
         </div>
 
-        <div id="library-tv" class="card card-bracketed" style="display:none;">
-            <span class="card-bracket-bottom left"></span>
-            <span class="card-bracket-bottom right"></span>
+        <div id="library-tv" class="card " style="display:none;">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
             <div class="card-content">
                 <div class="text-xs text-muted mb-4">${escapeHtml(tv.root)}</div>
                 <div class="file-tree">
@@ -379,8 +396,8 @@ function renderFileTree(items, depth = 0) {
         if (item.type === 'directory') {
             return `
                 <div class="file-tree-item" data-action="toggle-tree" style="padding-left:${depth * 1.25}rem;">
-                    <span class="tree-chevron" style="transition:transform 0.15s;display:inline-block;font-size:0.625rem;">▶</span>
-                    <span style="color:var(--strong-accent);">📁</span>
+                    <span class="tree-chevron" style="transition:transform 0.15s;display:inline-flex;align-items:center;"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+                    <span style="color:var(--strong-accent);display:inline-flex;align-items:center;"><i data-lucide="folder" style="width:16px;height:16px;"></i></span>
                     <span class="file-tree-name font-semibold">${escapeHtml(item.name)}</span>
                     <span class="file-tree-size">${item.children?.length || 0} items</span>
                 </div>
@@ -392,7 +409,7 @@ function renderFileTree(items, depth = 0) {
         return `
             <div class="file-tree-item" style="padding-left:${depth * 1.25}rem;">
                 <span style="width:0.75rem;display:inline-block;"></span>
-                <span>📄</span>
+                <span style="display:inline-flex;align-items:center;"><i data-lucide="file" style="width:16px;height:16px;color:var(--muted-foreground)"></i></span>
                 <span class="file-tree-name">${escapeHtml(item.name)}</span>
                 <span class="file-tree-size font-mono">${formatBytes(item.size)}</span>
             </div>
@@ -402,51 +419,89 @@ function renderFileTree(items, depth = 0) {
 
 function renderSettings() {
     return `
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Settings</h1>
-                <p class="page-subtitle">Configure MediaFlow</p>
-            </div>
+        <div class="tabs-list" id="settings-tabs" style="margin-bottom: 1.5rem;">
+            <button class="tab active" data-action="switch-settings-tab" data-tab="account">
+                <span class="tab-text">Account</span>
+                <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+            </button>
+            <button class="tab" data-action="switch-settings-tab" data-tab="integrations">
+                <span class="tab-text">Integrations</span>
+                <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+            </button>
         </div>
 
-        <div class="flex-col gap-6" style="display:flex;">
-            <div class="card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
-                <div class="card-header"><span class="font-semibold text-sm">Jellyfin Integration</span></div>
-                <div class="card-content" id="settings-jellyfin">
-                    <div class="skeleton" style="height:120px;"></div>
+        <div id="settings-account-tab">
+            <div class="card" style="padding:0; gap:0;">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
+                <div style="border-bottom: 1px solid var(--border); padding: 1.5rem; background: var(--card-header);">
+                    <h3 class="font-semibold text-lg flex items-center gap-2">
+                        <i data-lucide="user" style="width:18px;height:18px;"></i>
+                        Account Information
+                    </h3>
+                    <p class="text-sm text-muted" style="margin-top:0.375rem;">Your account details</p>
                 </div>
-            </div>
-
-            <div class="card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
-                <div class="card-header"><span class="font-semibold text-sm">aria2c Configuration</span></div>
-                <div class="card-content" id="settings-aria2">
-                    <div class="skeleton" style="height:80px;"></div>
+                <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="label">Username</label>
+                        <input class="input" value="admin" disabled style="max-width: 28rem;">
+                    </div>
                 </div>
-            </div>
 
-            <div class="card card-bracketed">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
-                <div class="card-header"><span class="font-semibold text-sm">Change Password</span></div>
-                <div class="card-content">
-                    <form id="password-change-form">
+                <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem; background: var(--card-header);">
+                    <h3 class="font-semibold text-lg flex items-center gap-2">
+                        <i data-lucide="key-round" style="width:18px;height:18px;"></i>
+                        Change Password
+                    </h3>
+                    <p class="text-sm text-muted" style="margin-top:0.375rem;">Update your password to keep your account secure</p>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <form id="password-change-form" style="display:flex; flex-direction:column; gap:1rem;">
                         <div class="form-group">
                             <label class="label" for="current-password">Current Password</label>
-                            <input class="input" type="password" id="current-password" required autocomplete="current-password">
+                            <input class="input" type="password" id="current-password" required autocomplete="current-password" style="max-width: 28rem;">
                         </div>
                         <div class="form-group">
                             <label class="label" for="new-password">New Password</label>
-                            <input class="input" type="password" id="new-password" required autocomplete="new-password" minlength="6">
+                            <input class="input" type="password" id="new-password" required autocomplete="new-password" minlength="6" style="max-width: 28rem;">
+                            <p class="text-xs text-muted" style="margin-top:0.5rem;">Must be at least 6 characters long</p>
                         </div>
-                        <div id="password-error" class="text-sm" style="color:var(--destructive);margin-bottom:0.75rem;display:none;"></div>
-                        <button type="submit" class="btn btn-primary">Update Password</button>
+                        <div id="password-error" class="text-sm" style="color:var(--destructive);display:none;"></div>
+                        <button type="submit" class="btn btn-primary" style="align-self:flex-start;">
+                            <i data-lucide="key-round" style="width:16px;height:16px;"></i>
+                            Change Password
+                        </button>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-integrations-tab" style="display:none;">
+            <div class="card" style="padding:0; gap:0;">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
+                
+                <div style="border-bottom: 1px solid var(--border); padding: 1.5rem; background: var(--card-header);">
+                    <h3 class="font-semibold text-lg flex items-center gap-2">
+                        <i data-lucide="boxes" style="width:18px;height:18px;"></i>
+                        Jellyfin Integration
+                    </h3>
+                    <p class="text-sm text-muted" style="margin-top:0.375rem;">Connect to your media server</p>
+                </div>
+                <div style="padding: 1.5rem;" id="settings-jellyfin">
+                    <div class="skeleton" style="height:120px;"></div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem; background: var(--card-header);">
+                    <h3 class="font-semibold text-lg flex items-center gap-2">
+                        <i data-lucide="download-cloud" style="width:18px;height:18px;"></i>
+                        aria2c Configuration
+                    </h3>
+                    <p class="text-sm text-muted" style="margin-top:0.375rem;">Configure your download daemon</p>
+                </div>
+                <div style="padding: 1.5rem;" id="settings-aria2">
+                    <div class="skeleton" style="height:80px;"></div>
                 </div>
             </div>
         </div>
     `;
 }
+

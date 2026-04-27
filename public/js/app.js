@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MediaFlow — App Logic
+   Utsuru — App Logic
    Navigation, state management, SSE live updates, theme toggle.
    All event listeners are attached via JS (no inline onclick in HTML).
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -11,11 +11,19 @@ let historySearchTimer = null;
 // ── Initialization ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     // Load saved theme
-    const savedTheme = localStorage.getItem('mediaflow-theme') || 'dark';
+    const savedTheme = localStorage.getItem('utsuru-theme') || 'dark';
     applyTheme(savedTheme);
 
     // Attach all event listeners
     attachEventListeners();
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (e) => {
+        const page = e.state?.page || pageFromPath();
+        if (currentPage !== page) {
+            navigateTo(page, false); // false = don't push to history again
+        }
+    });
 
     // Check authentication
     try {
@@ -73,6 +81,7 @@ function showLogin() {
     document.getElementById('login-screen').style.display = '';
     document.getElementById('app-shell').style.display = 'none';
     stopSSE();
+    document.title = 'Utsuru — Login';
 }
 
 function showApp(user) {
@@ -80,7 +89,9 @@ function showApp(user) {
     document.getElementById('app-shell').style.display = '';
     const usernameEl = document.getElementById('header-username');
     if (usernameEl) usernameEl.textContent = user?.username || '';
-    navigateTo('dashboard');
+    // Restore the correct page from the current URL path
+    const page = pageFromPath();
+    navigateTo(page, false); // don't push state — path already correct
     refreshIcons();
 }
 
@@ -109,44 +120,86 @@ async function handleLogin(e) {
 
 async function handleLogout() {
     try { await API.logout(); } catch { /* ignore */ }
+    window.history.replaceState(null, '', '/');
     showLogin();
 }
 
+// ── Routing Helpers ──────────────────────────────────────────────────────────
+const VALID_PAGES = ['dashboard', 'downloads', 'library', 'history', 'settings'];
+
+function pageFromPath() {
+    const seg = window.location.pathname.replace(/^\//, '').split('/')[0];
+    return VALID_PAGES.includes(seg) ? seg : 'dashboard';
+}
+
 // ── Navigation ──────────────────────────────────────────────────────────────
-async function navigateTo(page) {
+const PAGE_META = {
+    dashboard: { label: 'Dashboard',  icon: 'layout-dashboard' },
+    downloads: { label: 'Downloads',  icon: 'download' },
+    library:   { label: 'Library',    icon: 'folder-open' },
+    history:   { label: 'History',    icon: 'clock' },
+    settings:  { label: 'Settings',   icon: 'settings' },
+};
+
+async function navigateTo(page, pushState = true) {
+    if (!VALID_PAGES.includes(page)) page = 'dashboard';
     currentPage = page;
     stopSSE();
+
+    // Push URL to browser history (enables real URL + Back button)
+    if (pushState) {
+        window.history.pushState({ page }, '', `/${page}`);
+    }
+
+    // Update document title
+    const meta = PAGE_META[page] || PAGE_META.dashboard;
+    document.title = `${meta.label} — Utsuru`;
 
     // Update sidebar active state
     document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.toggle('active', el.dataset.page === page);
     });
 
-    // Update breadcrumb
-    const names = {
-        dashboard: 'Dashboard',
-        downloads: 'Downloads',
-        library: 'Library',
-        history: 'History',
-        settings: 'Settings'
-    };
-    document.getElementById('breadcrumb-text').textContent = names[page] || page;
+    // Update breadcrumb icon + text dynamically
+    const breadcrumbIcon = document.querySelector('.breadcrumb i[data-lucide]');
+    if (breadcrumbIcon) {
+        breadcrumbIcon.setAttribute('data-lucide', meta.icon);
+    }
+    const breadcrumbText = document.getElementById('breadcrumb-text');
+    if (breadcrumbText) breadcrumbText.textContent = meta.label;
 
     // Close mobile sidebar
     closeMobileSidebar();
 
-    // Show loading skeleton
+    // Show animated skeleton
     const content = document.getElementById('page-content');
-    content.innerHTML = '<div class="flex items-center justify-center" style="padding:4rem;"><div class="skeleton" style="width:200px;height:20px;"></div></div>';
+    content.innerHTML = `
+        <div style="padding: 1rem; max-width: 1200px; margin: 0 auto;">
+            <div class="skeleton" style="height:2rem; width:200px; margin-bottom:1.5rem;"></div>
+            <div class="card" style="padding:0; gap:0; margin-bottom:1rem;">
+                <div style="padding:1rem; display:flex; gap:1rem;">
+                    <div class="skeleton" style="height:80px; flex:1;"></div>
+                    <div class="skeleton" style="height:80px; flex:1;"></div>
+                    <div class="skeleton" style="height:80px; flex:1;"></div>
+                    <div class="skeleton" style="height:80px; flex:1;"></div>
+                </div>
+            </div>
+            <div class="card" style="padding:1rem; gap:0;">
+                <div class="skeleton" style="height:200px; width:100%;"></div>
+            </div>
+        </div>`;
 
     try {
         switch (page) {
             case 'dashboard': await loadDashboard(); break;
             case 'downloads': await loadDownloads(); break;
-            case 'library': await loadLibrary(); break;
-            case 'history': await loadHistory(); break;
-            case 'settings': await loadSettings(); break;
+            case 'library':   await loadLibrary();   break;
+            case 'history':   await loadHistory();   break;
+            case 'settings':  await loadSettings();  break;
         }
+        // Fade in the page content
+        content.classList.add('page-fade-in');
+        setTimeout(() => content.classList.remove('page-fade-in'), 300);
     } catch (err) {
         content.innerHTML = `<div class="empty-state"><p style="color:var(--destructive);">Error loading page: ${escapeHtml(err.message)}</p></div>`;
     }
@@ -317,6 +370,9 @@ function handleDynamicClick(e) {
         case 'switch-library-tab':
             switchLibraryTab(btn.dataset.tab);
             break;
+        case 'switch-settings-tab':
+            switchSettingsTab(btn.dataset.tab);
+            break;
         case 'toggle-tree':
             const children = btn.nextElementSibling;
             const chevron = btn.querySelector('.tree-chevron');
@@ -397,7 +453,8 @@ function updatePathPreview() {
     } else {
         path = `/media/tv/${title}/Season ${season}/${title} - S${season}E${episode}.mkv`;
     }
-    document.getElementById('dl-path-preview').textContent = `📁 ${path}`;
+    document.getElementById('dl-path-preview').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="folder" style="width:14px;height:14px;"></i> ${path}</span>`;
+    if (window.lucide) window.lucide.createIcons();
 }
 
 async function submitDownload(e) {
@@ -462,6 +519,16 @@ function switchLibraryTab(tab) {
     const tvEl = document.getElementById('library-tv');
     if (moviesEl) moviesEl.style.display = tab === 'movies' ? '' : 'none';
     if (tvEl) tvEl.style.display = tab === 'tv' ? '' : 'none';
+}
+
+function switchSettingsTab(tab) {
+    const tabs = document.querySelectorAll('#settings-tabs .tab');
+    tabs[0]?.classList.toggle('active', tab === 'account');
+    tabs[1]?.classList.toggle('active', tab === 'integrations');
+    const accountEl = document.getElementById('settings-account-tab');
+    const integrationsEl = document.getElementById('settings-integrations-tab');
+    if (accountEl) accountEl.style.display = tab === 'account' ? '' : 'none';
+    if (integrationsEl) integrationsEl.style.display = tab === 'integrations' ? '' : 'none';
 }
 
 async function scanJellyfin() {
@@ -558,7 +625,7 @@ function toggleTheme() {
     const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
     const next = current === 'dark' ? 'light' : 'dark';
     applyTheme(next);
-    localStorage.setItem('mediaflow-theme', next);
+    localStorage.setItem('utsuru-theme', next);
 }
 
 function applyTheme(theme) {
@@ -593,8 +660,70 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// ── Custom Select (Radix Replica) ───────────────────────────────────────────
+function initCustomSelects() {
+    document.querySelectorAll('select.select').forEach(select => {
+        if (select.dataset.customized) return;
+        select.dataset.customized = 'true';
+        select.style.display = 'none';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-select-wrapper';
+        wrapper.style.position = 'relative';
+        wrapper.style.display = 'inline-block';
+        wrapper.style.width = select.style.width || select.style.maxWidth || '100%';
+        wrapper.style.maxWidth = select.style.maxWidth;
+
+        const trigger = document.createElement('div');
+        trigger.className = 'custom-select-trigger';
+        trigger.style.height = select.style.height;
+        trigger.innerHTML = `<span style="text-transform: capitalize;">${select.options[select.selectedIndex]?.text || ''}</span> <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--muted-foreground);"></i>`;
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'custom-select-dropdown';
+        
+        Array.from(select.options).forEach(opt => {
+            const item = document.createElement('div');
+            item.className = 'custom-select-item';
+            if (opt.value === select.value) item.classList.add('selected');
+            item.textContent = opt.text;
+            item.dataset.value = opt.value;
+            
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                select.value = opt.value;
+                trigger.querySelector('span').textContent = opt.text;
+                Array.from(dropdown.children).forEach(c => c.classList.remove('selected'));
+                item.classList.add('selected');
+                dropdown.style.display = 'none';
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            dropdown.appendChild(item);
+        });
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = dropdown.style.display === 'block';
+            document.querySelectorAll('.custom-select-dropdown').forEach(d => d.style.display = 'none');
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        });
+
+        wrapper.appendChild(trigger);
+        wrapper.appendChild(dropdown);
+        select.parentNode.insertBefore(wrapper, select.nextSibling);
+    });
+
+    if (!window.__customSelectListener) {
+        window.__customSelectListener = true;
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select-dropdown').forEach(d => d.style.display = 'none');
+        });
+    }
+}
+
 // ── Lucide Icons Refresh ────────────────────────────────────────────────────
 function refreshIcons() {
+    initCustomSelects();
     if (window.lucide) {
         try { window.lucide.createIcons(); } catch { /* ignore */ }
     }

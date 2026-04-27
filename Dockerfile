@@ -8,7 +8,7 @@ RUN npm install --production
 # ── Runtime stage ────────────────────────────────────────────────────────────
 FROM node:22-alpine
 
-LABEL org.opencontainers.image.title="MediaFlow"
+LABEL org.opencontainers.image.title="Utsuru"
 LABEL org.opencontainers.image.description="Self-hosted Jellyfin download manager"
 
 # Install aria2c
@@ -25,9 +25,9 @@ RUN mkdir -p /app/data
 RUN mkdir -p /media/movies /media/tv
 
 # Don't run as root in production
-RUN addgroup -S mediaflow && adduser -S mediaflow -G mediaflow
-RUN chown -R mediaflow:mediaflow /app /media/movies /media/tv
-USER mediaflow
+RUN addgroup -S utsuru && adduser -S utsuru -G utsuru
+RUN chown -R utsuru:utsuru /app /media/movies /media/tv
+USER utsuru
 
 EXPOSE 4096
 

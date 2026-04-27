@@ -13,6 +13,7 @@ import libraryRouter from './routes/library.js';
 import jellyfinRouter from './routes/jellyfin.js';
 import settingsRouter from './routes/settings.js';
 import { authMiddleware } from './middleware/auth.js';
+import logger from './lib/logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,6 +40,27 @@ async function start() {
         },
         crossOriginEmbedderPolicy: false,
     }));
+
+    // ─── HTTP Request Logger ─────────────────────────────────────────────────
+    app.use((req, res, next) => {
+        const start = Date.now();
+        res.on('finish', () => {
+            const ms = Date.now() - start;
+            const level = res.statusCode >= 500 ? 'error'
+                : res.statusCode >= 400 ? 'warn' : 'debug';
+            // Skip noisy SSE and static asset logs
+            if (req.path === '/api/downloads/active') return;
+            logger[level]({
+                event: 'http_request',
+                method: req.method,
+                path: req.path,
+                status: res.statusCode,
+                ms,
+                ip: req.ip,
+            });
+        });
+        next();
+    });
 
     // Rate limit auth endpoints
     const authLimiter = rateLimit({
@@ -84,7 +106,7 @@ async function start() {
     app.use('/api/jellyfin', jellyfinRouter);
     app.use('/api/settings', settingsRouter);
 
-    // ─── SPA Fallback ───────────────────────────────────────────────────────
+    // ─── SPA Fallback (History API support) ─────────────────────────────────
     app.get('/{*path}', (req, res) => {
         if (req.path.startsWith('/api/')) {
             return res.status(404).json({ error: 'Not found' });
@@ -93,8 +115,18 @@ async function start() {
     });
 
     // ─── Error Handler ──────────────────────────────────────────────────────
+    app.use((err, req, _res, next) => {
+        logger.error({
+            event: 'server_error',
+            method: req.method,
+            path: req.path,
+            error: err.message,
+            stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+        });
+        next(err);
+    });
+
     app.use((err, _req, res, _next) => {
-        console.error('[MediaFlow Error]', err.message);
         res.status(err.status || 500).json({
             error: process.env.NODE_ENV === 'production'
                 ? 'Internal server error'
@@ -104,11 +136,12 @@ async function start() {
 
     // ─── Start Server ───────────────────────────────────────────────────────
     app.listen(PORT, HOST, () => {
-        console.log(`\n  🎬 MediaFlow running at http://${HOST}:${PORT}\n`);
+        logger.info({ event: 'server_start', host: HOST, port: PORT },
+            `Utsuru running at http://${HOST}:${PORT}`);
     });
 }
 
 start().catch(err => {
-    console.error('Failed to start MediaFlow:', err);
+    logger.fatal({ event: 'startup_failed', error: err.message }, 'Failed to start Utsuru');
     process.exit(1);
 });

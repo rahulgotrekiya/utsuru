@@ -3,10 +3,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { queryOne, run } from '../db/database.js';
 import { sanitizeText } from '../lib/sanitize.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 const SECRET = process.env.SECRET_KEY || 'change-me';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mediaflow';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'utsuru';
 
 // Ensure default admin user exists
 export function ensureAdminUser() {
@@ -14,7 +15,7 @@ export function ensureAdminUser() {
     if (!existing) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 12);
         run('INSERT INTO users (username, password) VALUES (?, ?)', 'admin', hash);
-        console.log('[Auth] Default admin user created');
+        logger.info({ event: 'admin_user_created' }, 'Default admin user created');
     }
 }
 
@@ -29,6 +30,7 @@ router.post('/login', (req, res) => {
 
     const user = queryOne('SELECT * FROM users WHERE username = ?', username);
     if (!user || !bcrypt.compareSync(password, user.password)) {
+        logger.warn({ event: 'login_failed', username }, 'Invalid login attempt');
         return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -46,6 +48,7 @@ router.post('/login', (req, res) => {
         path: '/',
     });
 
+    logger.info({ event: 'login_success', user_id: user.id, username: user.username }, 'User logged in');
     res.json({ success: true, user: { id: user.id, username: user.username } });
 });
 
@@ -92,6 +95,7 @@ router.put('/password', (req, res) => {
 
         const hash = bcrypt.hashSync(newPassword, 12);
         run('UPDATE users SET password = ? WHERE id = ?', hash, decoded.id);
+        logger.info({ event: 'password_changed', user_id: decoded.id }, 'Password updated');
         res.json({ success: true });
     } catch {
         res.status(401).json({ error: 'Session expired' });

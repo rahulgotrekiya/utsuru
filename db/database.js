@@ -2,7 +2,7 @@ import initSqlJs from 'sql.js';
 import path from 'path';
 import fs from 'fs';
 
-const DB_PATH = process.env.DATABASE_PATH || './data/mediaflow.db';
+const DB_PATH = process.env.DATABASE_PATH || './data/utsuru.db';
 
 // Ensure data directory exists
 const dataDir = path.dirname(DB_PATH);

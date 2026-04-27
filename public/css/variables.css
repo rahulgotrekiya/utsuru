@@ -1,9 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MediaFlow — Design Tokens (Ported from Zerobyte)
+   Utsuru — Design Tokens
    oklch color system, light + dark themes
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap');
 
 :root {
     /* ── Radius ─────────────────────────────────────────── */
@@ -96,4 +97,27 @@
     --sidebar-accent: oklch(0.269 0 0);
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
+}
+
+/* ── Icon: Asterisk Brand Logo (Lucide SVG) ──────────────────────────────── */
+.icon-asterisk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ff543a;
+}
+
+/* Lucide renders <i data-lucide> → <svg>; size it to 80px */
+.icon-asterisk svg {
+    width: 40px;
+    height: 40px;
+    stroke: #ff543a;
+    color: #ff543a;
+}
+
+/* Small variant used inline (e.g. login logo) */
+.icon-asterisk.icon-sm svg {
+    width: 40px;
+    height: 40px;
 }

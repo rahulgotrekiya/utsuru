@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="description" content="MediaFlow — Self-hosted Jellyfin download manager">
+    <meta name="description" content="utsuru — Self-hosted Jellyfin download manager">
+    <meta name="theme-color" content="#ff543a">
     <meta name="robots" content="noindex, nofollow">
-    <title>MediaFlow — Download Manager</title>
+    <title>utsuru — Download Manager</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/components.css">
 </head>
+
 <body>
     <!-- Login Screen -->
     <div id="login-screen" class="login-wrapper grid-background">
         <div class="login-card" style="position:relative;z-index:10;">
             <div class="login-logo">
-                <h1>🎬 MediaFlow</h1>
+                <h1><div class="icon-asterisk icon-sm" style="display:inline-flex;vertical-align:middle;"><i data-lucide="asterisk"></i></div> utsuru</h1>
                 <p>Self-hosted download manager</p>
             </div>
-            <form id="login-form" class="card card-bracketed" autocomplete="on">
-                <span class="card-bracket-bottom left"></span>
-                <span class="card-bracket-bottom right"></span>
+            <form id="login-form" class="card " autocomplete="on">
+                <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span
+                        class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span
+                        class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
                 <div class="card-content">
                     <div class="form-group">
                         <label class="label" for="login-username">Username</label>
-                        <input class="input" type="text" id="login-username" name="username"
-                               placeholder="admin" autocomplete="username" required>
+                        <input class="input" type="text" id="login-username" name="username" placeholder="admin"
+                            autocomplete="username" required>
                     </div>
                     <div class="form-group">
                         <label class="label" for="login-password">Password</label>
-                        <input class="input" type="password" id="login-password" name="password"
-                               placeholder="••••••••" autocomplete="current-password" required>
+                        <input class="input" type="password" id="login-password" name="password" placeholder="••••••••"
+                            autocomplete="current-password" required>
                     </div>
-                    <div id="login-error" class="text-sm" style="color: var(--destructive); margin-bottom: 0.75rem; display: none;"></div>
+                    <div id="login-error" class="text-sm"
+                        style="color: var(--destructive); margin-bottom: 0.75rem; display: none;"></div>
                     <button type="submit" class="btn btn-primary w-full" id="login-btn">Login</button>
                 </div>
             </form>
@@ -46,8 +52,10 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">🎬</div>
-                <span class="logo-text">MediaFlow</span>
+                <div class="logo">
+                    <div class="icon-asterisk"><i data-lucide="asterisk"></i></div>
+                </div>
+                <span class="logo-text">utsuru</span>
             </div>
             <nav class="sidebar-nav">
                 <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
@@ -79,26 +87,29 @@
         <!-- Main Content -->
         <div class="main-wrapper">
             <header class="app-header">
-                <div class="flex items-center gap-3">
-                    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                        <i data-lucide="menu" style="width:20px;height:20px;"></i>
-                    </button>
-                    <button class="btn-ghost btn-icon md-hidden" id="sidebar-collapse-btn" aria-label="Toggle sidebar">
-                        <i data-lucide="panel-left" style="width:18px;height:18px;"></i>
-                    </button>
-                    <div class="breadcrumb">
-                        <i data-lucide="layout-dashboard" style="width:16px;height:16px;"></i>
-                        <span class="current" id="breadcrumb-text">Dashboard</span>
+                <div class="app-header-inner">
+                    <div class="flex items-center gap-3">
+                        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                            <i data-lucide="menu" style="width:20px;height:20px;"></i>
+                        </button>
+                        <button class="btn-ghost btn-icon md-hidden" id="sidebar-collapse-btn"
+                            aria-label="Toggle sidebar">
+                            <i data-lucide="panel-left" style="width:18px;height:18px;"></i>
+                        </button>
+                        <div class="breadcrumb">
+                            <span class="current" id="breadcrumb-text">Dashboard</span>
+                        </div>
                     </div>
-                </div>
-                <div class="header-actions">
-                    <span class="text-sm text-muted md-hidden" id="header-username" style="padding-left:0.5rem;margin-right:0.75rem;"></span>
-                    <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle-btn">
-                        <i data-lucide="sun" style="width:16px;height:16px;"></i>
-                    </button>
-                    <button class="btn-ghost btn-icon" id="logout-btn" aria-label="Logout">
-                        <i data-lucide="log-out" style="width:16px;height:16px;"></i>
-                    </button>
+                    <div class="header-actions">
+                        <span class="text-sm text-muted md-hidden" id="header-username"
+                            style="padding-left:0.5rem;margin-right:0.75rem;"></span>
+                        <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle-btn">
+                            <i data-lucide="sun" style="width:16px;height:16px;"></i>
+                        </button>
+                        <button class="btn-ghost btn-icon" id="logout-btn" aria-label="Logout">
+                            <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -115,19 +126,33 @@
     <!-- Add Download Dialog -->
     <div id="add-download-dialog" class="dialog-overlay" style="display:none;">
         <div class="dialog">
-            <div class="dialog-header">
+            <div class="card-bracket"><span class="cb-tl-h"></span><span class="cb-tl-v"></span><span
+                    class="cb-tr-h"></span><span class="cb-tr-v"></span><span class="cb-bl-h"></span><span
+                    class="cb-bl-v"></span><span class="cb-br-h"></span><span class="cb-br-v"></span></div>
+            <div class="dialog-header bg-card-header">
                 <h2>Add Download</h2>
             </div>
             <div class="dialog-body">
-                <div class="tabs" id="download-type-tabs">
-                    <button class="tab active" id="tab-movie-btn">🎬 Movie</button>
-                    <button class="tab" id="tab-tv-btn">📺 TV Episode</button>
+                <div class="tabs-list" id="download-type-tabs" style="margin-bottom: 2rem;">
+                    <button class="tab active" id="tab-movie-btn">
+                        <span class="tab-text" style="display:flex;align-items:center;gap:0.25rem;"><i
+                                data-lucide="clapperboard" style="width:16px;height:16px;"></i> Movie</span>
+                        <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span
+                            class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+                    </button>
+                    <button class="tab" id="tab-tv-btn">
+                        <span class="tab-text" style="display:flex;align-items:center;gap:0.25rem;"><i data-lucide="tv"
+                                style="width:16px;height:16px;"></i> TV Episode</span>
+                        <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span><span
+                            class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+                    </button>
                 </div>
                 <form id="download-form">
                     <input type="hidden" id="dl-type" value="movie">
                     <div class="form-group">
                         <label class="label" for="dl-title">Title</label>
-                        <input class="input" type="text" id="dl-title" placeholder="e.g. Inception" required maxlength="200">
+                        <input class="input" type="text" id="dl-title" placeholder="e.g. Inception" required
+                            maxlength="200">
                     </div>
                     <div id="movie-fields">
                         <div class="form-group">
@@ -152,8 +177,11 @@
                         <input class="input" type="url" id="dl-url" placeholder="https://..." required>
                         <div class="label-muted">Only http:// and https:// URLs are accepted</div>
                     </div>
-                    <div id="dl-path-preview" class="text-xs text-muted" style="margin-top:0.5rem;padding:0.5rem 0.75rem;background:var(--secondary);border-radius:var(--radius-sm);"></div>
-                    <div id="dl-error" class="text-sm" style="color:var(--destructive);margin-top:0.75rem;display:none;"></div>
+                    <div id="dl-path-preview" class="text-xs text-muted"
+                        style="margin-top:0.5rem;padding:0.5rem 0.75rem;background:var(--secondary);border-radius:var(--radius-sm);">
+                    </div>
+                    <div id="dl-error" class="text-sm"
+                        style="color:var(--destructive);margin-top:0.75rem;display:none;"></div>
                 </form>
             </div>
             <div class="dialog-footer">
@@ -172,4 +200,5 @@
     <script src="/js/components.js"></script>
     <script src="/js/app.js"></script>
 </body>
+
 </html>
