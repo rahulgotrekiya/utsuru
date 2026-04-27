@@ -26,6 +26,9 @@ async function start() {
     const PORT = process.env.PORT || 4096;
     const HOST = process.env.HOST || '0.0.0.0';
 
+    // Trust first proxy (Nginx)
+    app.set('trust proxy', 1);
+
     // ─── Security Middleware ────────────────────────────────────────────────
     app.use(helmet({
         contentSecurityPolicy: {
