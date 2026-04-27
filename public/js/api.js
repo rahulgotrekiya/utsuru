@@ -1,7 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   Utsuru — API Client
-   All fetch calls to the backend, with error handling
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* API Client — all fetch calls to the backend */
 
 const API = {
     async request(url, options = {}) {
@@ -19,7 +16,7 @@ const API = {
         return data;
     },
 
-    // Auth
+    /* Auth */
     login: (username, password) =>
         API.request('/api/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) }),
     logout: () =>
@@ -27,12 +24,12 @@ const API = {
     me: () =>
         API.request('/api/auth/me'),
 
-    // Stats
+    /* Stats */
     getStats: () => API.request('/api/stats'),
     getChartData: () => API.request('/api/stats/chart'),
     getRecent: () => API.request('/api/stats/recent'),
 
-    // Downloads
+    /* Downloads */
     getDownloads: (params = {}) => {
         const qs = new URLSearchParams(params).toString();
         return API.request(`/api/downloads?${qs}`);
@@ -46,18 +43,18 @@ const API = {
     deleteDownload: (id) =>
         API.request(`/api/downloads/${id}`, { method: 'DELETE' }),
 
-    // Library
+    /* Library */
     getMovies: () => API.request('/api/library/movies'),
     getTv: () => API.request('/api/library/tv'),
     getLibraryStats: () => API.request('/api/library/stats'),
 
-    // Jellyfin
+    /* Jellyfin */
     scanJellyfin: () =>
         API.request('/api/jellyfin/scan', { method: 'POST' }),
     jellyfinStatus: () =>
         API.request('/api/jellyfin/status'),
 
-    // Settings
+    /* Settings */
     getSettings: () => API.request('/api/settings'),
     updateSettings: (data) =>
         API.request('/api/settings', { method: 'PUT', body: JSON.stringify(data) }),

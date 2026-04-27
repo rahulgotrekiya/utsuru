@@ -1,0 +1,79 @@
+/* Cards */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--card-foreground);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 0;
+    box-shadow: 0 8px 30px -15px rgba(0,0,0,0.04);
+    transition: background-color 0.3s ease;
+}
+
+.dark .card {
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+/* Bracket corner decorations */
+.card-bracket {
+    pointer-events: none;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: 10;
+    user-select: none;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover > .card-bracket {
+    opacity: 1;
+}
+
+.card-bracket span {
+    position: absolute;
+    background-color: var(--foreground);
+}
+
+.card-bracket .cb-tl-h { left: 0; top: 0; height: 2px; width: 16px; }
+.card-bracket .cb-tl-v { left: 0; top: 0; height: 16px; width: 2px; }
+.card-bracket .cb-tr-h { right: 0; top: 0; height: 2px; width: 16px; }
+.card-bracket .cb-tr-v { right: 0; top: 0; height: 16px; width: 2px; }
+.card-bracket .cb-bl-h { left: 0; bottom: 0; height: 2px; width: 16px; }
+.card-bracket .cb-bl-v { left: 0; bottom: 0; height: 16px; width: 2px; }
+.card-bracket .cb-br-h { right: 0; bottom: 0; height: 2px; width: 16px; }
+.card-bracket .cb-br-v { right: 0; bottom: 0; height: 16px; width: 2px; }
+
+/* Card sections */
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.card-description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}

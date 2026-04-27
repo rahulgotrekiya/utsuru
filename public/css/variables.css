@@ -1,20 +1,17 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   Utsuru — Design Tokens
-   oklch color system, light + dark themes
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* Design Tokens — oklch color system, light + dark themes */
 
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap');
 
 :root {
-    /* ── Radius ─────────────────────────────────────────── */
+    /* Radius */
     --radius: 0.625rem;
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
 
-    /* ── Light theme colors ─────────────────────────────── */
+    /* Light theme colors */
     --background: oklch(0.98 0.002 250);
     --foreground: oklch(0.20 0.01 260);
     --card: #ffffff;
@@ -38,14 +35,14 @@
     --ring: oklch(0.7 0.01 260);
     --strong-accent: #ff543a;
 
-    /* ── Chart colors ──────────────────────────────────── */
+    /* Chart palette */
     --chart-1: oklch(0.55 0.22 260);
     --chart-2: oklch(0.6 0.15 200);
     --chart-3: oklch(0.45 0.12 280);
     --chart-4: oklch(0.7 0.15 190);
     --chart-5: oklch(0.55 0.18 300);
 
-    /* ── Sidebar ───────────────────────────────────────── */
+    /* Sidebar */
     --sidebar: #ffffff;
     --sidebar-foreground: oklch(0.35 0.01 260);
     --sidebar-primary: oklch(0.20 0.01 260);
@@ -54,11 +51,11 @@
     --sidebar-accent-foreground: oklch(0.20 0.01 260);
     --sidebar-border: oklch(0.90 0.01 260);
 
-    /* ── Typography ────────────────────────────────────── */
+    /* Typography */
     --font-sans: "Google Sans Code", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
-/* ── Dark Theme ──────────────────────────────────────────────────── */
+/* Dark Theme */
 .dark {
     color-scheme: dark;
     --background: #131313;
@@ -99,7 +96,7 @@
     --sidebar-border: oklch(1 0 0 / 10%);
 }
 
-/* ── Icon: Asterisk Brand Logo (Lucide SVG) ──────────────────────────────── */
+/* Asterisk Brand Icon */
 .icon-asterisk {
     display: inline-flex;
     align-items: center;
@@ -108,7 +105,6 @@
     color: #ff543a;
 }
 
-/* Lucide renders <i data-lucide> → <svg>; size it to 40px */
 @keyframes spin-slow {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -122,7 +118,6 @@
     animation: spin-slow 5s linear infinite;
 }
 
-/* Small variant used inline (e.g. login logo) */
 .icon-asterisk.icon-sm svg {
     width: 40px;
     height: 40px;

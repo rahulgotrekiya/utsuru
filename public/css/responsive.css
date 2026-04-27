@@ -1,0 +1,209 @@
+/* Tablet & below (<=768px) */
+@media (max-width: 768px) {
+    .mobile-menu-btn { display: flex; }
+    .mobile-logo { display: flex; }
+
+    /* Hide sidebar on mobile */
+    .sidebar { display: none !important; }
+    .sidebar-overlay { display: none !important; }
+
+    /* Move actions into mobile menu */
+    .header-actions { display: none; }
+    .breadcrumb { display: none; }
+    #sidebar-collapse-btn { display: none !important; }
+
+    .app-header-inner { padding: 0 0.5rem; }
+
+    /* Mobile dropdown menu */
+    .mobile-menu {
+        display: none;
+        flex-direction: column;
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 0.5rem;
+        z-index: 90;
+        animation: mobileMenuSlide 0.2s ease;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    @keyframes mobileMenuSlide {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: none;
+        background: none;
+        color: var(--muted-foreground);
+        font-size: 0.875rem;
+        font-family: inherit;
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: all 0.15s ease;
+        width: 100%;
+        text-align: left;
+        position: relative;
+    }
+
+    .mobile-menu-item:hover {
+        background: var(--accent);
+        color: var(--foreground);
+    }
+
+    .mobile-menu-item.active {
+        background: rgba(255, 84, 58, 0.1);
+        color: var(--foreground);
+        font-weight: 500;
+    }
+
+    .mobile-menu-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background: var(--strong-accent);
+        border-radius: 0 2px 2px 0;
+    }
+
+    .mobile-menu-item.active i { color: var(--strong-accent); }
+
+    .mobile-menu-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0.375rem 0;
+    }
+
+    .mobile-menu-logout { color: var(--destructive); }
+    .mobile-menu-logout:hover { background: rgba(239, 68, 68, 0.1); color: var(--destructive); }
+
+    /* Page header stacking */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .page-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Stats grid: 2 columns */
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .stat-card { padding: 1rem; }
+    .stat-value-lg { font-size: 1.25rem; }
+
+    /* Cards tighter */
+    .card { padding: 1rem; }
+
+    /* Chart shorter */
+    .chart-bar-group { height: 80px; }
+    .chart-container { padding: 1rem; }
+
+    /* Table scroll */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 500px; }
+    th, td { padding: 0.5rem 0.75rem; font-size: 0.75rem; }
+
+    /* Dialog full width */
+    .dialog { width: 95%; max-width: 100%; max-height: 85vh; overflow-y: auto; }
+    .dialog-body { padding: 1rem; }
+    .dialog-footer { padding: 0.75rem 1rem; flex-wrap: wrap; }
+    .dialog-footer .btn { flex: 1; min-width: 0; }
+
+    /* Download cards */
+    .download-card { padding: 1rem; }
+    .download-title { font-size: 0.8125rem; flex-wrap: wrap; }
+    .download-meta { flex-wrap: wrap; gap: 0.5rem; }
+    .download-actions { flex-wrap: wrap; }
+    .download-actions .btn { flex: 1; min-width: 0; }
+
+    /* History filter wrap */
+    .card-header { flex-wrap: wrap; gap: 0.5rem; }
+
+    /* Toast full width */
+    .toast-container { left: 0.75rem; right: 0.75rem; bottom: 0.75rem; }
+    .toast { max-width: 100%; }
+
+    /* Form inputs full width */
+    .input, .select { max-width: 100% !important; }
+
+    /* Tabs scrollable */
+    .tabs-list { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs-list::-webkit-scrollbar { display: none; }
+
+    /* Empty state */
+    .empty-state { padding: 2rem 1rem; }
+
+    /* Header pill tighter */
+    .header-actions { padding: 0.125rem 0.375rem; }
+
+    /* Prevent content overflow */
+    .page-container { overflow-x: hidden; }
+
+    /* Long text truncation */
+    .download-title,
+    .file-tree-name,
+    td:first-child {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Bracket corners smaller */
+    .card-bracket .cb-tl-h, .card-bracket .cb-tr-h,
+    .card-bracket .cb-bl-h, .card-bracket .cb-br-h { width: 12px; }
+    .card-bracket .cb-tl-v, .card-bracket .cb-tr-v,
+    .card-bracket .cb-bl-v, .card-bracket .cb-br-v { height: 12px; }
+
+    /* Grid utilities */
+    .grid-3, .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+    .md-hidden { display: none !important; }
+
+    .page-container { padding: 0.75rem 0.5rem 1.5rem; }
+    .app-header { padding: 0 0.75rem; }
+}
+
+/* Small mobile (<=480px) */
+@media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .card { padding: 0.75rem; }
+    .stat-card { padding: 0.75rem; }
+    .page-title { font-size: 1.1rem; }
+    .page-subtitle { font-size: 0.75rem; }
+    .stat-value-lg { font-size: 1.125rem; }
+    .chart-bar-group { height: 60px; gap: 1px; }
+    .chart-bar-label { font-size: 0.5rem; }
+    .download-card { padding: 0.75rem; }
+    .download-stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+    .tab { font-size: 0.6875rem; padding: 0 0.75rem; height: 1.5rem; }
+    .tab::before { height: 1.5rem; }
+    .tab-r { height: 1.5rem; }
+
+    .dialog { width: 100%; border-radius: 0; max-height: 100dvh; }
+    .dialog-overlay { align-items: flex-end; }
+
+    .btn { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+    .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
+
+    .login-card { max-width: 100%; }
+    .login-logo h1 { font-size: 1.25rem; }
+    .breadcrumb { font-size: 0.8125rem; }
+    .form-group { margin-bottom: 0.75rem; }
+
+    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+}
+
+/* Desktop overscroll */
+@media (min-width: 48rem) {
+    html, body { overscroll-behavior: none; }
+}
