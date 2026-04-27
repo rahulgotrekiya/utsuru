@@ -2,6 +2,8 @@
   "name": "utsuru",
   "version": "1.0.0",
   "description": "Self-hosted Jellyfin download manager",
+  "license": "MIT",
+  "author": "Rahul Gotrekiya",
   "main": "server.js",
   "type": "module",
   "scripts": {

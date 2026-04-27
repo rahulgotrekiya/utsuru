@@ -166,4 +166,4 @@ utsuru/
 
 ## License
 
-MIT
+[MIT](./LICENSE) © Rahul Gotrekiya
