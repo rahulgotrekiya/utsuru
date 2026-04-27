@@ -620,6 +620,11 @@ table {
     border-collapse: collapse;
     font-size: 0.8125rem;
 }
+
+.history-table-row:hover {
+    background-color: rgba(255,255,255,0.03) !important;
+}
+
 thead { background: var(--card-header); }
 th {
     text-align: left;

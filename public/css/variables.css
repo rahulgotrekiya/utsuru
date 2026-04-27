@@ -108,12 +108,18 @@
     color: #ff543a;
 }
 
-/* Lucide renders <i data-lucide> → <svg>; size it to 80px */
+/* Lucide renders <i data-lucide> → <svg>; size it to 40px */
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .icon-asterisk svg {
     width: 40px;
     height: 40px;
     stroke: #ff543a;
     color: #ff543a;
+    animation: spin-slow 5s linear infinite;
 }
 
 /* Small variant used inline (e.g. login logo) */

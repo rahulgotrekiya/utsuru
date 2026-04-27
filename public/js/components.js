@@ -312,7 +312,7 @@ function renderHistory(downloads, total) {
                         ${downloads.length === 0
                             ? '<tr><td colspan="3" style="padding:3rem 0.5rem; text-align:center; color:var(--muted-foreground);">No destinations match your filters.</td></tr>'
                             : downloads.map(d => `
-                                <tr style="border-bottom:1px solid var(--border); transition:background-color 0.15s ease; height:3rem; cursor:pointer;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.03)'" onmouseout="this.style.backgroundColor='transparent'">
+                                <tr class="history-table-row" style="border-bottom:1px solid var(--border); transition:background-color 0.15s ease; height:3rem; cursor:pointer;">
                                     <td style="padding:0.5rem; font-weight:500; color:var(--strong-accent);">
                                         ${escapeHtml(d.title)}${d.year ? ` <span style="color:var(--muted-foreground);">(${d.year})</span>` : ''}${d.season != null ? ` <span style="color:var(--muted-foreground);">S${String(d.season).padStart(2,'0')}E${String(d.episode).padStart(2,'0')}</span>` : ''}
                                     </td>
