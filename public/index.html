@@ -1,297 +1,428 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="description" content="utsuru - Self-hosted Jellyfin download manager">
-    <meta name="theme-color" content="#ff543a">
-    <meta name="robots" content="noindex, nofollow">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="utsuru - Self-hosted Jellyfin download manager"
+    />
+    <meta name="theme-color" content="#ff543a" />
+    <meta name="robots" content="noindex, nofollow" />
 
     <title>utsuru - Download Manager</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Stylesheets (order matters: tokens → base → layout → cards → forms → components → responsive) -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/layout.css">
-    <link rel="stylesheet" href="/css/cards.css">
-    <link rel="stylesheet" href="/css/forms.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-</head>
+    <link rel="stylesheet" href="/css/variables.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/layout.css" />
+    <link rel="stylesheet" href="/css/cards.css" />
+    <link rel="stylesheet" href="/css/forms.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+  </head>
 
-<body>
-
+  <body>
     <!-- ================================================================
          Login Screen
          ================================================================ -->
     <div id="login-screen" class="login-wrapper grid-background">
-        <div class="login-card" style="position:relative;z-index:10;">
-            <div class="login-logo">
-                <h1>
-                    <div class="icon-asterisk icon-sm" style="display:inline-flex;vertical-align:middle;">
-                        <i data-lucide="asterisk"></i>
-                    </div>
-                    utsuru
-                </h1>
-                <p>Self-hosted download manager</p>
+      <div class="login-card" style="position: relative; z-index: 10">
+        <div class="login-logo">
+          <h1>
+            <div
+              class="icon-asterisk icon-sm"
+              style="display: inline-flex; vertical-align: middle"
+            >
+              <i data-lucide="asterisk"></i>
             </div>
-
-            <form id="login-form" class="card" autocomplete="on">
-                <div class="card-bracket">
-                    <span class="cb-tl-h"></span><span class="cb-tl-v"></span>
-                    <span class="cb-tr-h"></span><span class="cb-tr-v"></span>
-                    <span class="cb-bl-h"></span><span class="cb-bl-v"></span>
-                    <span class="cb-br-h"></span><span class="cb-br-v"></span>
-                </div>
-                <div class="card-content">
-                    <div class="form-group">
-                        <label class="label" for="login-username">Username</label>
-                        <input class="input" type="text" id="login-username" name="username" placeholder="admin"
-                            autocomplete="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="label" for="login-password">Password</label>
-                        <input class="input" type="password" id="login-password" name="password" placeholder="••••••••"
-                            autocomplete="current-password" required>
-                    </div>
-                    <div id="login-error" class="text-sm"
-                        style="color:var(--destructive); margin-bottom:0.75rem; display:none;"></div>
-                    <button type="submit" class="btn btn-primary w-full" id="login-btn">Login</button>
-                </div>
-            </form>
+            utsuru
+          </h1>
+          <p>Self-hosted download manager</p>
         </div>
-    </div>
 
+        <form id="login-form" class="card" autocomplete="on">
+          <div class="card-bracket">
+            <span class="cb-tl-h"></span><span class="cb-tl-v"></span>
+            <span class="cb-tr-h"></span><span class="cb-tr-v"></span>
+            <span class="cb-bl-h"></span><span class="cb-bl-v"></span>
+            <span class="cb-br-h"></span><span class="cb-br-v"></span>
+          </div>
+          <div class="card-content">
+            <div class="form-group">
+              <label class="label" for="login-username">Username</label>
+              <input
+                class="input"
+                type="text"
+                id="login-username"
+                name="username"
+                placeholder="admin"
+                autocomplete="username"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="label" for="login-password">Password</label>
+              <input
+                class="input"
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+            <div
+              id="login-error"
+              class="text-sm"
+              style="
+                color: var(--destructive);
+                margin-bottom: 0.75rem;
+                display: none;
+              "
+            ></div>
+            <button type="submit" class="btn btn-primary w-full" id="login-btn">
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- ================================================================
          App Shell
          ================================================================ -->
-    <div id="app-shell" class="app-layout" style="display:none;">
+    <div id="app-shell" class="app-layout" style="display: none">
+      <!-- Sidebar Overlay (mobile only) -->
+      <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-        <!-- Sidebar Overlay (mobile only) -->
-        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+      <!-- Sidebar Navigation -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <div class="icon-asterisk"><i data-lucide="asterisk"></i></div>
+          </div>
+          <span class="logo-text">utsuru</span>
+        </div>
 
-        <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <div class="icon-asterisk"><i data-lucide="asterisk"></i></div>
+        <nav class="sidebar-nav">
+          <button
+            class="nav-item active"
+            data-page="dashboard"
+            id="nav-dashboard"
+          >
+            <i data-lucide="layout-dashboard" class="nav-icon"></i>
+            <span class="nav-label">Dashboard</span>
+          </button>
+          <button class="nav-item" data-page="downloads" id="nav-downloads">
+            <i data-lucide="download" class="nav-icon"></i>
+            <span class="nav-label">Downloads</span>
+          </button>
+          <button class="nav-item" data-page="library" id="nav-library">
+            <i data-lucide="folder-open" class="nav-icon"></i>
+            <span class="nav-label">Library</span>
+          </button>
+          <button class="nav-item" data-page="history" id="nav-history">
+            <i data-lucide="clock" class="nav-icon"></i>
+            <span class="nav-label">History</span>
+          </button>
+          <button class="nav-item" data-page="settings" id="nav-settings">
+            <i data-lucide="settings" class="nav-icon"></i>
+            <span class="nav-label">Settings</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span id="version-text">v1.0.0</span>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="main-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+          <div class="app-header-inner">
+            <div class="flex items-center justify-between w-full gap-3">
+              <!-- Mobile logo (visible <=768px) -->
+              <div class="mobile-logo">
+                <div class="icon-asterisk icon-sm">
+                  <i data-lucide="asterisk"></i>
                 </div>
                 <span class="logo-text">utsuru</span>
+              </div>
+
+              <!-- Sidebar collapse (desktop only) -->
+              <button
+                class="btn-ghost btn-icon md-hidden"
+                id="sidebar-collapse-btn"
+                aria-label="Toggle sidebar"
+              >
+                <i
+                  data-lucide="panel-left"
+                  style="width: 18px; height: 18px"
+                ></i>
+              </button>
+
+              <!-- Breadcrumb + hamburger -->
+              <div class="breadcrumb">
+                <span class="current" id="breadcrumb-text">Dashboard</span>
+                <button
+                  class="mobile-menu-btn"
+                  id="mobile-menu-btn"
+                  aria-label="Toggle menu"
+                >
+                  <i
+                    data-lucide="menu"
+                    id="mobile-menu-icon"
+                    style="width: 20px; height: 20px"
+                  ></i>
+                </button>
+              </div>
             </div>
 
-            <nav class="sidebar-nav">
-                <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
-                    <i data-lucide="layout-dashboard" class="nav-icon"></i>
-                    <span class="nav-label">Dashboard</span>
-                </button>
-                <button class="nav-item" data-page="downloads" id="nav-downloads">
-                    <i data-lucide="download" class="nav-icon"></i>
-                    <span class="nav-label">Downloads</span>
-                </button>
-                <button class="nav-item" data-page="library" id="nav-library">
-                    <i data-lucide="folder-open" class="nav-icon"></i>
-                    <span class="nav-label">Library</span>
-                </button>
-                <button class="nav-item" data-page="history" id="nav-history">
-                    <i data-lucide="clock" class="nav-icon"></i>
-                    <span class="nav-label">History</span>
-                </button>
-                <button class="nav-item" data-page="settings" id="nav-settings">
-                    <i data-lucide="settings" class="nav-icon"></i>
-                    <span class="nav-label">Settings</span>
-                </button>
-            </nav>
-
-            <div class="sidebar-footer">
-                <span id="version-text">v1.0.0</span>
+            <!-- Desktop actions -->
+            <div class="header-actions">
+              <span
+                class="text-sm text-muted md-hidden"
+                id="header-username"
+                style="padding-left: 0.5rem; margin-right: 0.75rem"
+              ></span>
+              <button
+                class="theme-toggle"
+                aria-label="Toggle theme"
+                id="theme-toggle-btn"
+              >
+                <i data-lucide="sun" style="width: 16px; height: 16px"></i>
+              </button>
+              <button
+                class="btn-ghost btn-icon"
+                id="logout-btn"
+                aria-label="Logout"
+              >
+                <i data-lucide="log-out" style="width: 16px; height: 16px"></i>
+              </button>
             </div>
-        </aside>
+          </div>
+        </header>
 
-        <!-- Main Content Area -->
-        <div class="main-wrapper">
+        <!-- Mobile Dropdown Menu -->
+        <nav class="mobile-menu" id="mobile-menu">
+          <button class="mobile-menu-item" data-page="dashboard">
+            <i
+              data-lucide="layout-dashboard"
+              style="width: 18px; height: 18px"
+            ></i>
+            <span>Dashboard</span>
+          </button>
+          <button class="mobile-menu-item" data-page="downloads">
+            <i data-lucide="download" style="width: 18px; height: 18px"></i>
+            <span>Downloads</span>
+          </button>
+          <button class="mobile-menu-item" data-page="library">
+            <i data-lucide="folder-open" style="width: 18px; height: 18px"></i>
+            <span>Library</span>
+          </button>
+          <button class="mobile-menu-item" data-page="history">
+            <i data-lucide="clock" style="width: 18px; height: 18px"></i>
+            <span>History</span>
+          </button>
+          <button class="mobile-menu-item" data-page="settings">
+            <i data-lucide="settings" style="width: 18px; height: 18px"></i>
+            <span>Settings</span>
+          </button>
+          <div class="mobile-menu-divider"></div>
+          <button class="mobile-menu-item" id="mobile-theme-btn">
+            <i data-lucide="sun" style="width: 18px; height: 18px"></i>
+            <span>Toggle Theme</span>
+          </button>
+          <button
+            class="mobile-menu-item mobile-menu-logout"
+            id="mobile-logout-btn"
+          >
+            <i data-lucide="log-out" style="width: 18px; height: 18px"></i>
+            <span>Logout</span>
+          </button>
+        </nav>
 
-            <!-- Header -->
-            <header class="app-header">
-                <div class="app-header-inner">
-                    <div class="flex items-center justify-between w-full gap-3">
-                        <!-- Mobile logo (visible <=768px) -->
-                        <div class="mobile-logo">
-                            <div class="icon-asterisk icon-sm"><i data-lucide="asterisk"></i></div>
-                            <span class="logo-text">utsuru</span>
-                        </div>
-
-                        <!-- Sidebar collapse (desktop only) -->
-                        <button class="btn-ghost btn-icon md-hidden" id="sidebar-collapse-btn"
-                            aria-label="Toggle sidebar">
-                            <i data-lucide="panel-left" style="width:18px;height:18px;"></i>
-                        </button>
-
-                        <!-- Breadcrumb + hamburger -->
-                        <div class="breadcrumb">
-                            <span class="current" id="breadcrumb-text">Dashboard</span>
-                            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                                <i data-lucide="menu" id="mobile-menu-icon" style="width:20px;height:20px;"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Desktop actions -->
-                    <div class="header-actions">
-                        <span class="text-sm text-muted md-hidden" id="header-username"
-                            style="padding-left:0.5rem;margin-right:0.75rem;"></span>
-                        <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle-btn">
-                            <i data-lucide="sun" style="width:16px;height:16px;"></i>
-                        </button>
-                        <button class="btn-ghost btn-icon" id="logout-btn" aria-label="Logout">
-                            <i data-lucide="log-out" style="width:16px;height:16px;"></i>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Mobile Dropdown Menu -->
-            <nav class="mobile-menu" id="mobile-menu">
-                <button class="mobile-menu-item" data-page="dashboard">
-                    <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
-                    <span>Dashboard</span>
-                </button>
-                <button class="mobile-menu-item" data-page="downloads">
-                    <i data-lucide="download" style="width:18px;height:18px;"></i>
-                    <span>Downloads</span>
-                </button>
-                <button class="mobile-menu-item" data-page="library">
-                    <i data-lucide="folder-open" style="width:18px;height:18px;"></i>
-                    <span>Library</span>
-                </button>
-                <button class="mobile-menu-item" data-page="history">
-                    <i data-lucide="clock" style="width:18px;height:18px;"></i>
-                    <span>History</span>
-                </button>
-                <button class="mobile-menu-item" data-page="settings">
-                    <i data-lucide="settings" style="width:18px;height:18px;"></i>
-                    <span>Settings</span>
-                </button>
-                <div class="mobile-menu-divider"></div>
-                <button class="mobile-menu-item" id="mobile-theme-btn">
-                    <i data-lucide="sun" style="width:18px;height:18px;"></i>
-                    <span>Toggle Theme</span>
-                </button>
-                <button class="mobile-menu-item mobile-menu-logout" id="mobile-logout-btn">
-                    <i data-lucide="log-out" style="width:18px;height:18px;"></i>
-                    <span>Logout</span>
-                </button>
-            </nav>
-
-            <!-- Page Content -->
-            <div class="main-content">
-                <div class="grid-background">
-                    <div class="page-container" id="page-content">
-                        <!-- Pages rendered here by JS -->
-                    </div>
-                </div>
+        <!-- Page Content -->
+        <div class="main-content">
+          <div class="grid-background">
+            <div class="page-container" id="page-content">
+              <!-- Pages rendered here by JS -->
             </div>
+          </div>
         </div>
+      </div>
     </div>
-
 
     <!-- ================================================================
          Add Download Dialog
          ================================================================ -->
-    <div id="add-download-dialog" class="dialog-overlay" style="display:none;">
-        <div class="dialog">
-            <div class="card-bracket">
-                <span class="cb-tl-h"></span><span class="cb-tl-v"></span>
-                <span class="cb-tr-h"></span><span class="cb-tr-v"></span>
-                <span class="cb-bl-h"></span><span class="cb-bl-v"></span>
-                <span class="cb-br-h"></span><span class="cb-br-v"></span>
-            </div>
-
-            <div class="dialog-header bg-card-header">
-                <h2>Add Download</h2>
-            </div>
-
-            <div class="dialog-body">
-                <!-- Type Tabs -->
-                <div class="tabs-list" id="download-type-tabs" style="margin-bottom:2rem;">
-                    <button class="tab active" id="tab-movie-btn">
-                        <span class="tab-text" style="display:flex;align-items:center;gap:0.25rem;">
-                            <i data-lucide="clapperboard" style="width:16px;height:16px;"></i> Movie
-                        </span>
-                        <span class="bracket-piece tab-bl"></span>
-                        <span class="bracket-piece tab-tr"></span>
-                        <span class="bracket-piece tab-r"></span>
-                        <span class="bracket-piece tab-br"></span>
-                    </button>
-                    <button class="tab" id="tab-tv-btn">
-                        <span class="tab-text" style="display:flex;align-items:center;gap:0.25rem;">
-                            <i data-lucide="tv" style="width:16px;height:16px;"></i> TV Episode
-                        </span>
-                        <span class="bracket-piece tab-bl"></span>
-                        <span class="bracket-piece tab-tr"></span>
-                        <span class="bracket-piece tab-r"></span>
-                        <span class="bracket-piece tab-br"></span>
-                    </button>
-                </div>
-
-                <!-- Download Form -->
-                <form id="download-form">
-                    <input type="hidden" id="dl-type" value="movie">
-
-                    <div class="form-group">
-                        <label class="label" for="dl-title">Title</label>
-                        <input class="input" type="text" id="dl-title" placeholder="e.g. Inception" required
-                            maxlength="200">
-                    </div>
-
-                    <div id="movie-fields">
-                        <div class="form-group">
-                            <label class="label" for="dl-year">Year</label>
-                            <input class="input" type="number" id="dl-year" placeholder="2010" min="1900" max="2099">
-                        </div>
-                    </div>
-
-                    <div id="tv-fields" style="display:none;">
-                        <div class="flex gap-4">
-                            <div class="form-group" style="flex:1;">
-                                <label class="label" for="dl-season">Season</label>
-                                <input class="input" type="number" id="dl-season" placeholder="1" min="0" max="99">
-                            </div>
-                            <div class="form-group" style="flex:1;">
-                                <label class="label" for="dl-episode">Episode</label>
-                                <input class="input" type="number" id="dl-episode" placeholder="1" min="0" max="9999">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label" for="dl-url">Download URL</label>
-                        <input class="input" type="url" id="dl-url" placeholder="https://..." required>
-                        <div class="label-muted">Only http:// and https:// URLs are accepted</div>
-                    </div>
-
-                    <div id="dl-path-preview" class="text-xs text-muted"
-                        style="margin-top:0.5rem; padding:0.5rem 0.75rem; background:var(--secondary); border-radius:var(--radius-sm);">
-                    </div>
-
-                    <div id="dl-error" class="text-sm"
-                        style="color:var(--destructive); margin-top:0.75rem; display:none;"></div>
-                </form>
-            </div>
-
-            <div class="dialog-footer">
-                <button class="btn btn-secondary" id="cancel-dl-btn">Cancel</button>
-                <button class="btn btn-accent" id="submit-dl-btn">Start Download</button>
-            </div>
+    <div id="add-download-dialog" class="dialog-overlay" style="display: none">
+      <div class="dialog">
+        <div class="card-bracket">
+          <span class="cb-tl-h"></span><span class="cb-tl-v"></span>
+          <span class="cb-tr-h"></span><span class="cb-tr-v"></span>
+          <span class="cb-bl-h"></span><span class="cb-bl-v"></span>
+          <span class="cb-br-h"></span><span class="cb-br-v"></span>
         </div>
-    </div>
 
+        <div class="dialog-header bg-card-header">
+          <h2>Add Download</h2>
+        </div>
+
+        <div class="dialog-body">
+          <!-- Type Tabs -->
+          <div
+            class="tabs-list"
+            id="download-type-tabs"
+            style="margin-bottom: 2rem"
+          >
+            <button class="tab active" id="tab-movie-btn">
+              <span
+                class="tab-text"
+                style="display: flex; align-items: center; gap: 0.25rem"
+              >
+                <i
+                  data-lucide="clapperboard"
+                  style="width: 16px; height: 16px"
+                ></i>
+                Movie
+              </span>
+              <span class="bracket-piece tab-bl"></span>
+              <span class="bracket-piece tab-tr"></span>
+              <span class="bracket-piece tab-r"></span>
+              <span class="bracket-piece tab-br"></span>
+            </button>
+            <button class="tab" id="tab-tv-btn">
+              <span
+                class="tab-text"
+                style="display: flex; align-items: center; gap: 0.25rem"
+              >
+                <i data-lucide="tv" style="width: 16px; height: 16px"></i> TV
+                Episode
+              </span>
+              <span class="bracket-piece tab-bl"></span>
+              <span class="bracket-piece tab-tr"></span>
+              <span class="bracket-piece tab-r"></span>
+              <span class="bracket-piece tab-br"></span>
+            </button>
+          </div>
+
+          <!-- Download Form -->
+          <form id="download-form">
+            <input type="hidden" id="dl-type" value="movie" />
+
+            <div class="form-group" style="position: relative;">
+              <label class="label" for="dl-title">Title</label>
+              <input
+                class="input"
+                type="text"
+                id="dl-title"
+                placeholder="e.g. Inception"
+                required
+                maxlength="200"
+                autocomplete="off"
+              />
+              <div id="dl-title-suggestions" class="custom-select-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 50; max-height: 200px; overflow-y: auto;">
+                 <!-- Suggestions injected here -->
+              </div>
+            </div>
+
+            <div id="movie-fields">
+              <div class="form-group">
+                <label class="label" for="dl-year">Year</label>
+                <input
+                  class="input"
+                  type="number"
+                  id="dl-year"
+                  placeholder="2010"
+                  min="1900"
+                  max="2099"
+                />
+              </div>
+            </div>
+
+            <div id="tv-fields" style="display: none">
+              <div class="flex gap-4">
+                <div class="form-group" style="flex: 1">
+                  <label class="label" for="dl-season">Season</label>
+                  <input
+                    class="input"
+                    type="number"
+                    id="dl-season"
+                    placeholder="1"
+                    min="0"
+                    max="99"
+                  />
+                </div>
+                <div class="form-group" style="flex: 1">
+                  <label class="label" for="dl-episode">Episode</label>
+                  <input
+                    class="input"
+                    type="number"
+                    id="dl-episode"
+                    placeholder="1"
+                    min="0"
+                    max="9999"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="label" for="dl-url">Download URL</label>
+              <input
+                class="input"
+                type="url"
+                id="dl-url"
+                placeholder="https://..."
+                required
+              />
+              <div class="label-muted">
+                Only http:// and https:// URLs are accepted
+              </div>
+            </div>
+
+            <div
+              id="dl-path-preview"
+              class="text-xs text-muted"
+              style="
+                margin-top: 0.5rem;
+                padding: 0.5rem 0.75rem;
+                background: var(--secondary);
+                border-radius: var(--radius-sm);
+              "
+            ></div>
+
+            <div
+              id="dl-error"
+              class="text-sm"
+              style="
+                color: var(--destructive);
+                margin-top: 0.75rem;
+                display: none;
+              "
+            ></div>
+          </form>
+        </div>
+
+        <div class="dialog-footer">
+          <button class="btn btn-secondary" id="cancel-dl-btn">Cancel</button>
+          <button class="btn btn-accent" id="submit-dl-btn">
+            Start Download
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
-
 
     <!-- ================================================================
          Scripts (loaded at end to not block rendering)
@@ -302,7 +433,5 @@
     <script src="/js/utils.js"></script>
     <script src="/js/components.js"></script>
     <script src="/js/app.js"></script>
-
-</body>
-
+  </body>
 </html>

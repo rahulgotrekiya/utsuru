@@ -151,27 +151,45 @@ router.post('/', async (req, res) => {
             }
         }
 
+        // Retrieve format settings from database
+        const formatSettings = {};
+        const settingRows = queryAll("SELECT key, value FROM settings WHERE key IN ('movie_folder_format', 'movie_file_format', 'tv_folder_format', 'tv_file_format')");
+        for (const row of settingRows) {
+            formatSettings[row.key] = row.value;
+        }
+
         const mediaRoot = type === 'movie' ? MOVIES_DIR : TV_DIR;
         const mediaPath = buildMediaPath(mediaRoot, {
             type, title: cleanTitle, year: cleanYear, season: cleanSeason, episode: cleanEpisode,
-        });
+        }, formatSettings);
 
-        fs.mkdirSync(mediaPath.dirPath, { recursive: true });
+        // Prevent exact duplicate/parallel folder if it already exists (case-insensitive check could be added here, relying on exact match for now)
+        if (!fs.existsSync(mediaPath.dirPath)) {
+            fs.mkdirSync(mediaPath.dirPath, { recursive: true });
+        }
 
-        let filename = mediaPath.fileName || null;
+        let filename = null;
+        try {
+            const urlObj = new URL(urlResult.url);
+            const urlFilename = decodeURIComponent(urlObj.pathname.split('/').pop() || '');
+            
+            // Only use URL filename if it looks "sane" (has an extension, not excessively long, doesn't look like a hash)
+            if (urlFilename && urlFilename.includes('.') && urlFilename.length < 80 && !/^[a-fA-F0-9_=-]{20,}/.test(urlFilename)) {
+                filename = sanitizeFilename(urlFilename);
+            }
+        } catch { /* ignore url parsing error */ }
+
+        // Fallback to our formatted name
         if (!filename) {
             try {
                 const urlObj = new URL(urlResult.url);
-                const urlFilename = decodeURIComponent(urlObj.pathname.split('/').pop() || '');
-                filename = sanitizeFilename(urlFilename) || sanitizeFilename(cleanTitle);
-            } catch { filename = sanitizeFilename(cleanTitle); }
-        } else {
-            try {
-                const urlObj = new URL(urlResult.url);
                 const urlFilename = urlObj.pathname.split('/').pop() || '';
-                const ext = urlFilename.includes('.') ? '.' + urlFilename.split('.').pop() : '.mkv';
-                filename = sanitizeFilename(filename) + ext;
-            } catch { filename = sanitizeFilename(filename) + '.mkv'; }
+                const extMatch = urlFilename.match(/\.[a-zA-Z0-9]+$/);
+                const ext = extMatch ? extMatch[0] : '.mkv';
+                filename = mediaPath.fileNameBase + ext;
+            } catch {
+                filename = mediaPath.fileNameBase + '.mkv';
+            }
         }
 
         let gid = null;
@@ -238,6 +256,21 @@ router.patch('/:id', async (req, res) => {
             case 'resume':
                 if (download.aria2_gid) await aria2.resumeDownload(download.aria2_gid);
                 run("UPDATE downloads SET status='downloading', updated_at=datetime('now') WHERE id=?", id);
+                break;
+            case 'retry':
+                if (download.status !== 'error') {
+                    return res.status(400).json({ error: 'Can only retry failed downloads' });
+                }
+                const downloadDir = download.filepath
+                    ? download.filepath.substring(0, download.filepath.lastIndexOf('/'))
+                    : null;
+                run("UPDATE downloads SET aria2_gid=NULL, error_msg=NULL, progress=0, speed=0, eta=0, status='queued', updated_at=datetime('now') WHERE id=?", id);
+                try {
+                    const gid = await aria2.addDownload(download.url, downloadDir, download.filename);
+                    run("UPDATE downloads SET aria2_gid=?, status='downloading', started_at=datetime('now'), updated_at=datetime('now') WHERE id=?", gid, id);
+                } catch (err) {
+                    logger.warn({ event: 'aria2_unavailable', download_id: id, error: err.message }, 'aria2c unavailable for retry, download queued');
+                }
                 break;
             case 'cancel':
                 if (download.aria2_gid) await aria2.cancelDownload(download.aria2_gid);

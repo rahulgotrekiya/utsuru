@@ -155,7 +155,11 @@ function renderDownloadCard(d) {
                 <span>${timeAgo(d.created_at)}</span>
             </div>
             ${(isActive || isPaused || isQueued) ? renderDownloadProgress(d, progress, isActive, isPaused) : ''}
-            ${d.status === 'error' ? `<div class="mt-2 text-sm" style="color:var(--destructive);display:flex;align-items:center;gap:4px;"><i data-lucide="triangle-alert" style="width:14px;height:14px;"></i> ${escapeHtml(d.error_msg || 'Unknown error')}</div>` : ''}
+            ${d.status === 'error' ? `<div class="mt-2 text-sm" style="color:var(--destructive);display:flex;align-items:center;gap:4px;"><i data-lucide="triangle-alert" style="width:14px;height:14px;"></i> ${escapeHtml(d.error_msg || 'Unknown error')}</div>
+            <div class="download-actions">
+                <button class="btn btn-secondary btn-sm" data-action="download-retry" data-id="${d.id}"><i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Retry</button>
+                <button class="btn btn-destructive btn-sm" data-action="download-cancel" data-id="${d.id}"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancel</button>
+            </div>` : ''}
         </div>
     `;
 }
@@ -350,6 +354,11 @@ function renderSettings() {
                 <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span>
                 <span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
             </button>
+            <button class="tab" data-action="switch-settings-tab" data-tab="automation">
+                <span class="tab-text">Automation & Naming</span>
+                <span class="bracket-piece tab-bl"></span><span class="bracket-piece tab-tr"></span>
+                <span class="bracket-piece tab-r"></span><span class="bracket-piece tab-br"></span>
+            </button>
         </div>
 
         <div id="settings-account-tab">
@@ -402,6 +411,16 @@ function renderSettings() {
                 ${renderSettingsSection('download-cloud', 'aria2c Configuration', 'Configure your download daemon')}
                 <div style="padding: 1.5rem;" id="settings-aria2">
                     <div class="skeleton" style="height:80px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-automation-tab" style="display:none;">
+            <div class="card" style="padding:0; gap:0;">
+                ${bracket()}
+                ${renderSettingsSection('wand-2', 'Automation & Naming', 'Configure naming conventions and search providers')}
+                <div style="padding: 1.5rem;" id="settings-automation">
+                    <div class="skeleton" style="height:250px;"></div>
                 </div>
             </div>
         </div>
